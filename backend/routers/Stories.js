@@ -45,7 +45,8 @@ router.get("/", async (req, res) => {
             as: "userDetails", //output array field
           },
         },
-      ]).sort({created_at: -1})
+      ])
+      .sort({ created_at: -1 })
       .exec()
       .then((doc) => {
         res.status(200).send({
@@ -140,6 +141,19 @@ router.get("/user/:uid", async (req, res) => {
       message: "Unexpected error occurred",
     });
   }
+});
+
+router.delete("/:id", async (req, res) => {
+  await storiesDB
+    .findByIdAndRemove(req.params.id)
+    .exec()
+    .then((doc) => {
+      if (!doc) {
+        return res.status(404).end();
+      }
+      return res.status(202).end();
+    })
+    .catch((err) => next(err));
 });
 
 module.exports = router;
