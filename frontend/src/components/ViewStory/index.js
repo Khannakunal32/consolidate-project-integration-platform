@@ -24,6 +24,7 @@ const Index = ({ userDetails }) => {
   const navigate = useNavigate();
   const [modal, setModal] = React.useState(false);
   const user = useSelector(selectUser);
+  const [storyAuthorEmail, setstoryAuthorEmail] = useState(null);
 
   useEffect(() => {
     if (id) {
@@ -62,39 +63,44 @@ const Index = ({ userDetails }) => {
   };
 
   const deleteFromList = async () => {
-    if (id) {
-      await axios
-        .delete(`/api/stories/${id}`)
-        .then((res) => {
-          console.log(res.data.data);
-          alert("Story deleted successfully");
-          navigate("/me/stories");
-        })
-        .catch((err) => {
-          console.log(err.message);
-        });
+    if(!user) {
+      setModal(true);
+      return;
+    }
+    if (storyAuthorEmail == userDetails.email) {
+
+      if (id) {
+        await axios
+          .delete(`/api/stories/${id}`)
+          .then((res) => {
+            console.log(res.data.data);
+            alert("Story deleted successfully");
+            navigate("/me/stories");
+          })
+          .catch((err) => {
+            console.log(err.message);
+          });
+      }
+    }
+    else {
+      alert("You are not authorized to delete others projects")
     }
   };
-  // console.log(userDetails);
-  // if (user) {
-  //   const body = {
-  //     userid: userDetails?._id,
-  //   };
-  //   await axios
-  //     .post(`/api/user/list/${id}`, body)
-  //     .then((res) => {
-  //       console.log("list added successfully");
-  //       navigate("/me/lists");
-  //     })
-  //     .catch((err) => {
-  //       console.log(err.response.data.message);
-  //     });
-  // } else {
-  //   setModal(true);
-  // }
-  //     console.log(userDetails);
-  //   };
-
+  // const deleteFromList = async () => {
+  //   if (id) {
+  //     await axios
+  //       .delete(`/api/stories/${id}`)
+  //       .then((res) => {
+  //         console.log(res.data.data);
+  //         alert("Story deleted successfully");
+  //         navigate("/me/stories");
+  //       })
+  //       .catch((err) => {
+  //         console.log(err.message);
+  //       });
+  //   }
+  // };
+  
   return (
     <>
       {user ? <LandHeader /> : <HomeHeader backgroundColor={"#fff"} />}
